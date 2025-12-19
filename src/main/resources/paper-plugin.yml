@@ -1,0 +1,6 @@
+name: Minesweeper
+version: 1.0.0
+main: dev.fooble.minesweeper.Plugin
+api-version: '1.21.8'
+author: Fooble
+description: A plugin to play Minesweeper in Minecraft
