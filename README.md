@@ -3,7 +3,7 @@
 ![MIT License](https://img.shields.io/badge/License-MIT-a6da95?style=for-the-badge&labelColor=363a4f)
 ![Version mms-1.0-pre](https://img.shields.io/badge/Version-mms--1.0--pre-f5a97f?style=for-the-badge&labelColor=363a4f)
 ![Maven Version 1.0.0-SNAPSHOT](https://img.shields.io/badge/Maven-1.0.0--SNAPSHOT-91d7e3?style=for-the-badge&labelColor=363a4f)
-![Uses Fooble-Paper-Utils](https://img.shields.io/badge/Uses-Fooble--Paper--Utils-eed49f?style=for-the-badge&labelColor=363a4f)
+[![Uses Fooble-PaperMC-Utils](https://img.shields.io/badge/Uses-Fooble--PaperMC--Utils-eed49f?style=for-the-badge&labelColor=363a4f)](https://github.com/fooble2137/Fooble-Paper-Utils)
 
 A plugin for Minecraft PaperMC 1.21.8 which brings the classic Minesweeper game to your Minecraft server. Players can
 enjoy the thrill of uncovering hidden mines while navigating a grid of blocks.
