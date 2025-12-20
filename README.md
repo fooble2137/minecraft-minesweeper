@@ -1,14 +1,12 @@
 # Minecraft Minesweeper
 
 ![MIT License](https://img.shields.io/badge/License-MIT-a6da95?style=for-the-badge&labelColor=363a4f)
-![Version mms-1.0-pre](https://img.shields.io/badge/Version-mms--1.0--pre-f5a97f?style=for-the-badge&labelColor=363a4f)
-![Maven Version 1.0.0-SNAPSHOT](https://img.shields.io/badge/Maven-1.0.0--SNAPSHOT-91d7e3?style=for-the-badge&labelColor=363a4f)
+![Version mms-1.0](https://img.shields.io/badge/Version-mms--1.0-f5a97f?style=for-the-badge&labelColor=363a4f)
+![Maven Version 1.0.0](https://img.shields.io/badge/Maven-1.0.0-91d7e3?style=for-the-badge&labelColor=363a4f)
 [![Uses Fooble-PaperMC-Utils](https://img.shields.io/badge/Uses-Fooble--PaperMC--Utils-eed49f?style=for-the-badge&labelColor=363a4f)](https://github.com/fooble2137/Fooble-Paper-Utils)
 
 A plugin for Minecraft PaperMC 1.21.8 which brings the classic Minesweeper game to your Minecraft server. Players can
 enjoy the thrill of uncovering hidden mines while navigating a grid of blocks.
-
-**Note:** Currently, only one player can play at a time, but multiplayer support is planned for future updates.
 
 ## Usage
 
@@ -31,7 +29,7 @@ enjoy the thrill of uncovering hidden mines while navigating a grid of blocks.
 
 ## Planned Features
 
-- [ ] Multiple games at once
+- [x] Multiple games at once
 - [ ] Configuration file *(especially with regard to block types and messages)*
 - [ ] Better scoreboard
 - [ ] Timer and high scores
