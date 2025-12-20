@@ -1,17 +1,18 @@
 package dev.fooble.minesweeper;
 
+import dev.fooble.mc.worlds.impl.PaperWorldManager;
 import dev.fooble.minesweeper.commands.MinesweeperCommand;
 import dev.fooble.minesweeper.game.GameManager;
-import dev.fooble.minesweeper.game.GameTile;
 import dev.fooble.minesweeper.game.ScoreboardManager;
 import dev.fooble.minesweeper.listener.InteractListener;
 import dev.fooble.minesweeper.listener.PlayerListener;
-import org.bukkit.Material;
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@Getter
 public class Plugin extends JavaPlugin {
 
-    private final GameManager gameManager = new GameManager(this);
+    private final PaperWorldManager worldManager = new PaperWorldManager();
 
     @Override
     public void onEnable() {
@@ -21,7 +22,7 @@ public class Plugin extends JavaPlugin {
         );
 
         getServer().getPluginManager().registerEvents(
-                new InteractListener(this),
+                new InteractListener(),
                 this
         );
         getServer().getPluginManager().registerEvents(
@@ -32,12 +33,9 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        gameManager.resetGame(true);
+        GameManager.endAllGames();
 
         ScoreboardManager.removeAllScoreboards();
     }
 
-    public GameManager getGameManager() {
-        return gameManager;
-    }
 }

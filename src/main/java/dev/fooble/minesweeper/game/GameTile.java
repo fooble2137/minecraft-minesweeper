@@ -1,12 +1,13 @@
 package dev.fooble.minesweeper.game;
 
 import dev.fooble.mc.components.ComponentBuilder;
-import org.bukkit.Bukkit;
+import dev.fooble.minesweeper.Plugin;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Display;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
@@ -15,33 +16,42 @@ import org.joml.Vector3f;
 public class GameTile {
 
     private boolean hasFlag = false;
+    @Getter
     private boolean isRevealed = false;
-    private boolean hasMine = false;
+    @Setter
+    @Getter
+    private boolean isMine = false;
+    @Setter
+    @Getter
     private int adjacentMines = 0;
 
+    @Getter
     private final int x;
+    @Getter
     private final int z;
-    private final World gameWorld;
+    private final Game game;
+    private final Plugin plugin;
 
     private TextDisplay textDisplay;
 
-    public GameTile(int x, int z, World gameWorld) {
+    public GameTile(int x, int z, Game game, Plugin plugin) {
         this.x = x;
         this.z = z;
-        this.gameWorld = gameWorld;
+        this.game = game;
+        this.plugin = plugin;
     }
 
-    public void reveal(Player player, GameManager gameManager) {
-        if(isRevealed) {
-            return;
-        }
+    public void reveal() {
+        if(isRevealed) return;
 
-        setFlag(false, gameManager);
+        setFlag(false);
         isRevealed = true;
 
-        if(hasMine) {
+        final World gameWorld = plugin.getWorldManager().getWorld(game.getWorldName()).getBukkitWorld();
+
+        if(isMine) {
             gameWorld.getBlockAt(x, 100, z).setType(Material.TNT);
-            gameManager.loseGame(player);
+            game.looseGame();
         } else {
             switch(adjacentMines) {
                 case 0 -> gameWorld.getBlockAt(x, 100, z).setType(Material.WHITE_WOOL);
@@ -62,21 +72,23 @@ public class GameTile {
                     for(int dz = -1; dz <= 1; dz++) {
                         if(dx == 0 && dz == 0) continue;
 
-                        final GameTile adjacentTile = gameManager.getTileAt(x + dx, z + dz);
+                        final GameTile adjacentTile = game.getTileAt(x + dx, z + dz);
                         if(adjacentTile != null && !adjacentTile.isRevealed()) {
-                            adjacentTile.reveal(player, gameManager);
+                            adjacentTile.reveal();
                         }
                     }
                 }
             }
 
-            gameManager.checkWinCondition(player);
+            game.checkWinCondition();
         }
 
-        ScoreboardManager.updateScoreboard(player);
+        ScoreboardManager.updateScoreboard(game.getPlayer());
     }
 
     private void generateTextDisplay() {
+        final World gameWorld = plugin.getWorldManager().getWorld(game.getWorldName()).getBukkitWorld();
+
         final Location location = gameWorld
                 .getBlockAt(x, 101, z)
                 .getLocation()
@@ -117,48 +129,20 @@ public class GameTile {
         return hasFlag;
     }
 
-    public void setFlag(boolean hasFlag, GameManager gameManager) {
-        if(hasFlag == this.hasFlag || isRevealed) {
-            return;
-        }
+    public void setFlag(boolean hasFlag) {
+        if(hasFlag == this.hasFlag || isRevealed) return;
+
+        final World gameWorld = plugin.getWorldManager().getWorld(game.getWorldName()).getBukkitWorld();
 
         if(hasFlag) {
             gameWorld.getBlockAt(x, 101, z).setType(Material.RED_BANNER);
-            gameManager.incrementFlagsPlaced();
+            game.setFlagsPlaced(game.getFlagsPlaced() + 1);
         } else {
             gameWorld.getBlockAt(x, 101, z).setType(Material.AIR);
-            gameManager.decrementFlagsPlaced();
+            if(game.getFlagsPlaced() > 0) game.setFlagsPlaced(game.getFlagsPlaced() - 1);
         }
 
         this.hasFlag = hasFlag;
-    }
-
-    public boolean isRevealed() {
-        return isRevealed;
-    }
-
-    public boolean hasMine() {
-        return hasMine;
-    }
-
-    public void setMine(boolean hasMine) {
-        this.hasMine = hasMine;
-    }
-
-    public int getAdjacentMines() {
-        return adjacentMines;
-    }
-
-    public void setAdjacentMines(int adjacentMines) {
-        this.adjacentMines = adjacentMines;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getZ() {
-        return z;
     }
 
     public void removeTextDisplay() {

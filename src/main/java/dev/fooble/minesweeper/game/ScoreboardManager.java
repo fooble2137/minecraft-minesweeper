@@ -3,7 +3,6 @@ package dev.fooble.minesweeper.game;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,8 +10,8 @@ public class ScoreboardManager {
 
     private static final Map<Player, GameScoreboard> scoreboard = new HashMap<>();
 
-    public static void createScoreboard(Player player, GameManager gameManager) {
-        GameScoreboard gameScoreboard = new GameScoreboard(player, gameManager);
+    public static void createScoreboard(Player player, Game game) {
+        GameScoreboard gameScoreboard = new GameScoreboard(player, game);
         scoreboard.put(player, gameScoreboard);
         gameScoreboard.show();
         gameScoreboard.update();

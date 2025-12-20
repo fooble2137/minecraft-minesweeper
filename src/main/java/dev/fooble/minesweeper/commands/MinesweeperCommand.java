@@ -3,6 +3,7 @@ package dev.fooble.minesweeper.commands;
 import dev.fooble.mc.dialogue.Dialogue;
 import dev.fooble.minesweeper.Plugin;
 import dev.fooble.minesweeper.dialogues.StartGameDialogue;
+import dev.fooble.minesweeper.game.GameManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class MinesweeperCommand extends Command {
         }
 
         if(args.length == 0) {
-            new Dialogue(new StartGameDialogue(plugin.getGameManager()), plugin).open(player);
+            new Dialogue(new StartGameDialogue(plugin), plugin).open(player);
             return true;
         }
 
@@ -52,7 +53,7 @@ public class MinesweeperCommand extends Command {
             return true;
         }
 
-        plugin.getGameManager().endGame(player);
+        GameManager.endGame(player);
         return true;
     }
 

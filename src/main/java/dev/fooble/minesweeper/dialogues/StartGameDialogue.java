@@ -1,7 +1,6 @@
 package dev.fooble.minesweeper.dialogues;
 
 import dev.fooble.mc.components.ComponentBuilder;
-import dev.fooble.mc.dialogue.Dialogue;
 import dev.fooble.mc.dialogue.DialogueContent;
 import dev.fooble.mc.dialogue.DialogueEventHandler;
 import dev.fooble.mc.dialogue.DialogueHeader;
@@ -20,10 +19,10 @@ import java.util.List;
 
 public class StartGameDialogue implements DialogueContent {
 
-    private final GameManager gameManager;
+    private final Plugin plugin;
 
-    public StartGameDialogue(GameManager gameManager) {
-        this.gameManager = gameManager;
+    public StartGameDialogue(Plugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
@@ -80,7 +79,7 @@ public class StartGameDialogue implements DialogueContent {
                 final int sizeInt = (int) size;
                 final int minesInt = (int) mines;
 
-                gameManager.startGame(player, sizeInt, minesInt);
+                GameManager.startGame(player, sizeInt, minesInt, plugin);
             } catch(NumberFormatException e) {
                 player.sendRichMessage("<gradient:#FF5757:#C61919>Invalid input values!</gradient>");
             }

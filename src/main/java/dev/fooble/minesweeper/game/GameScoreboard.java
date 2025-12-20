@@ -7,11 +7,11 @@ import java.util.List;
 
 public class GameScoreboard extends PlayerScoreboard {
 
-    private final GameManager gameManager;
+    private final Game game;
 
-    protected GameScoreboard(Player player, GameManager gameManager) {
+    protected GameScoreboard(Player player, Game game) {
         super(player);
-        this.gameManager = gameManager;
+        this.game = game;
     }
 
     @Override
@@ -25,10 +25,10 @@ public class GameScoreboard extends PlayerScoreboard {
         int flagsPlaced = 0;
         int gameSize = 0;
 
-        if(gameManager != null) {
-            mines = gameManager.getMineCount();
-            flagsPlaced = gameManager.getFlagsPlaced();
-            gameSize = gameManager.getGameSize();
+        if(game != null) {
+            mines = game.getMineCount();
+            flagsPlaced = game.getFlagsPlaced();
+            gameSize = game.getGameSize();
         }
 
         return List.of(
