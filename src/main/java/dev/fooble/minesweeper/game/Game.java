@@ -93,7 +93,7 @@ public class Game {
             }
         }
 
-        player.sendRichMessage("<gradient:#FF5757:#C61919>Game over! You hit a mine!</gradient>");
+        player.sendRichMessage("<gradient:#FF5757:#C61919>Game Over! You hit a mine!</gradient><newline><newline><hover:show_text:'<gray><i>Click to exit the game</i></gray>'><click:run_command:'/minesweeper exit'><dark_gray>[<yellow><b>EXIT</b></yellow>]</dark_gray></click></hover>");
     }
 
     private void winGame() {
@@ -104,7 +104,7 @@ public class Game {
             tile.setFlag(false);
         }
 
-        player.sendRichMessage("<gradient:#40FF6D:#00A927>Congratulations! You've cleared the minefield successfully!</gradient>");
+        player.sendRichMessage("<gradient:#40FF6D:#00A927>Congratulations! You've cleared the minefield successfully!</gradient> <newline><newline><hover:show_text:'<gray><i>Click to exit the game</i></gray>'><click:run_command:'/minesweeper exit'><dark_gray>[<yellow><b>EXIT</b></yellow>]</dark_gray></click></hover>");
 
         WinFireworks.spawnWinFireworks(GameUtils.getBoardCenter(worldManager.getWorld(worldName).getBukkitWorld(), gameSize), plugin);
     }
