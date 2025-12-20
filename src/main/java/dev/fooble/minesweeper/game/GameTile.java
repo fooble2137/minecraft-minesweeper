@@ -2,6 +2,7 @@ package dev.fooble.minesweeper.game;
 
 import dev.fooble.mc.components.ComponentBuilder;
 import dev.fooble.minesweeper.Plugin;
+import dev.fooble.minesweeper.game.utils.GameUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -53,17 +54,8 @@ public class GameTile {
             gameWorld.getBlockAt(x, 100, z).setType(Material.TNT);
             game.looseGame();
         } else {
-            switch(adjacentMines) {
-                case 0 -> gameWorld.getBlockAt(x, 100, z).setType(Material.WHITE_WOOL);
-                case 1 -> gameWorld.getBlockAt(x, 100, z).setType(Material.BLUE_WOOL);
-                case 2 -> gameWorld.getBlockAt(x, 100, z).setType(Material.GREEN_WOOL);
-                case 3 -> gameWorld.getBlockAt(x, 100, z).setType(Material.RED_WOOL);
-                case 4 -> gameWorld.getBlockAt(x, 100, z).setType(Material.YELLOW_WOOL);
-                case 5 -> gameWorld.getBlockAt(x, 100, z).setType(Material.BROWN_WOOL);
-                case 6 -> gameWorld.getBlockAt(x, 100, z).setType(Material.CYAN_WOOL);
-                case 7 -> gameWorld.getBlockAt(x, 100, z).setType(Material.GRAY_WOOL);
-                case 8 -> gameWorld.getBlockAt(x, 100, z).setType(Material.BLACK_WOOL);
-            }
+            final Material numberMaterial = GameUtils.getNumberMaterial(adjacentMines);
+            gameWorld.getBlockAt(x, 100, z).setType(numberMaterial);
 
             generateTextDisplay();
 
@@ -96,19 +88,7 @@ public class GameTile {
 
         textDisplay = gameWorld.spawn(location, TextDisplay.class);
 
-        String colorTag;
-        switch(adjacentMines) {
-            case 1 -> colorTag = "<blue>";
-            case 2 -> colorTag = "<green>";
-            case 3 -> colorTag = "<red>";
-            case 4 -> colorTag = "<yellow>";
-            case 5 -> colorTag = "<dark_red>";
-            case 6 -> colorTag = "<aqua>";
-            case 7 -> colorTag = "<dark_gray>";
-            case 8 -> colorTag = "<black>";
-            default -> colorTag = "<white>";
-        }
-
+        final String colorTag = GameUtils.getNumberColorTag(adjacentMines);
         textDisplay.text(ComponentBuilder.of("<b>" + colorTag + adjacentMines + "</b>"));
 
         final Transformation transformation = new Transformation(
