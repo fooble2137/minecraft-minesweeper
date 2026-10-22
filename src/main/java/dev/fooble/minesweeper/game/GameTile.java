@@ -45,8 +45,15 @@ public class GameTile {
     public void reveal() {
         if(isRevealed) return;
 
+        if(isMine && game.getTilesRevealed() == 0) {
+            game.regenerateMines();
+            reveal();
+            return;
+        }
+
         setFlag(false);
         isRevealed = true;
+        game.setTilesRevealed(game.getTilesRevealed() + 1);
 
         final World gameWorld = plugin.getWorldManager().getWorld(game.getWorldName()).getBukkitWorld();
 

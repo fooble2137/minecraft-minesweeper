@@ -33,7 +33,11 @@ public class Game {
     private final int mineCount;
     @Getter
     @Setter
-    private int flagsPlaced = 0;
+    private int flagsPlaced, tilesRevealed = 0;
+
+    @Getter
+    @Setter
+    private int timeElapsedMs = 0;
 
     @Getter
     private GameState gameState;
@@ -52,6 +56,8 @@ public class Game {
         if(gameState != null) return;
         gameState = GameState.GENERATING;
 
+        ScoreboardManager.updateScoreboard(player);
+
         createWorld();
         generateMinefield();
         generateMines();
@@ -62,11 +68,15 @@ public class Game {
         ScoreboardManager.createScoreboard(player, this);
 
         gameState = GameState.PLAYING;
+        startTimer();
+        ScoreboardManager.updateScoreboard(player);
     }
 
     public void stopGame() {
         if(gameState == null) return;
         gameState = GameState.RESETTING;
+
+        ScoreboardManager.updateScoreboard(player);
 
         if(player.isOnline()) player.teleport(Bukkit.getWorlds().getFirst().getSpawnLocation());
 
@@ -78,8 +88,23 @@ public class Game {
         ScoreboardManager.removeScoreboard(player);
     }
 
+    public void restartGame() {
+        if(gameState == null) return;
+        gameState = GameState.RESETTING;
+
+        ScoreboardManager.updateScoreboard(player);
+        GameManager.startGame(player, gameSize, mineCount, plugin);
+
+        final ManagedWorld world = worldManager.getWorld(worldName);
+        if(world != null) {
+            worldManager.deleteWorld(worldName);
+        }
+    }
+
     public void looseGame() {
         gameState = GameState.LOST;
+
+        ScoreboardManager.updateScoreboard(player);
 
         for(GameTile tile : tiles) {
             tile.removeTextDisplay();
@@ -93,18 +118,28 @@ public class Game {
             }
         }
 
-        player.sendRichMessage("<gradient:#FF5757:#C61919>Game Over! You hit a mine!</gradient><newline><newline><hover:show_text:'<gray><i>Click to exit the game</i></gray>'><click:run_command:'/minesweeper exit'><dark_gray>[<yellow><b>EXIT</b></yellow>]</dark_gray></click></hover>");
+        player.playSound(player, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
+
+        player.sendRichMessage("<newline><sprite:blocks:block/tnt_side> <gradient:#FF5757:#C61919><b>Game Over!</b> You hit a mine!</gradient> <sprite:blocks:block/tnt_side><newline><newline>" +
+                "<hover:show_text:'<aqua><i>Click to exit the game</i></aqua>'><click:run_command:'/minesweeper exit'><dark_gray>[<red><b>EXIT</b></red>]</dark_gray></click></hover> " +
+                "<hover:show_text:'<aqua><i>Click to restart the game</i></aqua>'><click:run_command:'/minesweeper restart'><dark_gray>[<yellow><b>RESTART</b></yellow>]</dark_gray></click></hover><newline>");
     }
 
     private void winGame() {
         gameState = GameState.WON;
+
+        ScoreboardManager.updateScoreboard(player);
 
         for(final GameTile tile : tiles) {
             tile.removeTextDisplay();
             tile.setFlag(false);
         }
 
-        player.sendRichMessage("<gradient:#40FF6D:#00A927>Congratulations! You've cleared the minefield successfully!</gradient> <newline><newline><hover:show_text:'<gray><i>Click to exit the game</i></gray>'><click:run_command:'/minesweeper exit'><dark_gray>[<yellow><b>EXIT</b></yellow>]</dark_gray></click></hover>");
+        player.playSound(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
+
+        player.sendRichMessage("<newline><sprite:items:item/firework_rocket> <gradient:#40FF6D:#00A927><b>Congratulations!</b> You cleared the minefield successfully!</gradient> <sprite:items:item/firework_rocket><newline><newline>" +
+                "<hover:show_text:'<aqua><i>Click to exit the game</i></aqua>'><click:run_command:'/minesweeper exit'><dark_gray>[<red><b>EXIT</b></red>]</dark_gray></click></hover> " +
+                "<hover:show_text:'<aqua><i>Click to restart the game</i></aqua>'><click:run_command:'/minesweeper restart'><dark_gray>[<yellow><b>RESTART</b></yellow>]</dark_gray></click></hover><newline>");
 
         WinFireworks.spawnWinFireworks(GameUtils.getBoardCenter(worldManager.getWorld(worldName).getBukkitWorld(), gameSize), plugin);
     }
@@ -134,8 +169,8 @@ public class Game {
         );
 
         final World bukkitWorld = world.getBukkitWorld();
-        bukkitWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        bukkitWorld.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        bukkitWorld.setGameRule(GameRules.ADVANCE_TIME, false);
+        bukkitWorld.setGameRule(GameRules.ADVANCE_WEATHER, false);
         bukkitWorld.setTime(6000);
         bukkitWorld.setDifficulty(Difficulty.PEACEFUL);
     }
@@ -191,6 +226,16 @@ public class Game {
         }
     }
 
+    public void regenerateMines() {
+        for(GameTile tile : tiles) {
+            tile.setMine(false);
+            tile.setAdjacentMines(0);
+        }
+
+        generateMines();
+        calculateAdjacentMines();
+    }
+
     public GameTile getTileAt(int x, int z) {
         for(GameTile tile : tiles) {
             if(tile.getX() == x && tile.getZ() == z) {
@@ -198,6 +243,17 @@ public class Game {
             }
         }
         return null;
+    }
+
+    public void startTimer() {
+        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if(gameState != GameState.PLAYING) {
+                return;
+            }
+
+            timeElapsedMs += 1000;
+            ScoreboardManager.updateScoreboard(player);
+        }, 20L, 20L);
     }
 
 }

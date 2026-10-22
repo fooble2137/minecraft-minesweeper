@@ -56,4 +56,12 @@ public class GameUtils {
             default -> throw new IllegalStateException("Unexpected value: " + number);
         };
     }
+
+    public static @NotNull String formatTime(final int timeMs) {
+        final int totalSeconds = timeMs / 1000;
+        final int minutes = totalSeconds / 60;
+        final int seconds = totalSeconds % 60;
+
+        return String.format("%02d:%02d", minutes, seconds);
+    }
 }

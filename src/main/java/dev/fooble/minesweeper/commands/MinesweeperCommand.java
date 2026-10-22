@@ -20,7 +20,7 @@ public class MinesweeperCommand extends Command {
         super("minesweeper");
 
         setDescription("Start a game of Minesweeper");
-        setUsage("/minesweeper <exit>");
+        setUsage("/minesweeper <exit/restart>");
         setPermission("minesweeper.use");
 
         this.plugin = plugin;
@@ -34,12 +34,12 @@ public class MinesweeperCommand extends Command {
         }
 
         if(!sender.hasPermission("minesweeper.use")) {
-            sender.sendRichMessage("<gradient:#FF5757:#C61919>You do not have permission to use this command.</gradient>");
+            sender.sendRichMessage("<gradient:#FF5757:#C61919>You do not have permission to use this command!</gradient>");
             return true;
         }
 
         if(args.length > 1) {
-            sender.sendRichMessage("<gradient:#FF5757:#C61919>Incorrect usage! Please use:</gradient> <color:#ff9c9d>/minesweeper <exit></color>");
+            sender.sendRichMessage("<gradient:#FF5757:#C61919>Incorrect usage! Please use:</gradient> <color:#ff9c9d>/minesweeper <exit/restart></color>");
             return true;
         }
 
@@ -48,19 +48,24 @@ public class MinesweeperCommand extends Command {
             return true;
         }
 
-        if(!args[0].equalsIgnoreCase("exit")) {
-            sender.sendRichMessage("<gradient:#FF5757:#C61919>Incorrect usage! Please use:</gradient> <color:#ff9c9d>/minesweeper <exit></color>");
+        if(args[0].equalsIgnoreCase("restart")) {
+            GameManager.restartGame(player);
             return true;
         }
 
-        GameManager.endGame(player);
+        if(args[0].equalsIgnoreCase("exit")) {
+            GameManager.endGame(player);
+            return true;
+        }
+
+        sender.sendRichMessage("<gradient:#FF5757:#C61919>Incorrect usage! Please use:</gradient> <color:#ff9c9d>/minesweeper <exit/restart></color>");
         return true;
     }
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String @NotNull [] args) throws IllegalArgumentException {
         if(args.length == 1) {
-            return Stream.of("exit").filter(s -> s.startsWith(args[0].toLowerCase())).toList();
+            return Stream.of("exit", "restart").filter(s -> s.startsWith(args[0].toLowerCase())).toList();
         }
 
         return List.of();

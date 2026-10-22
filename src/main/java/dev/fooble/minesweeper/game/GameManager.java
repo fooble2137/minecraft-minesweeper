@@ -25,7 +25,7 @@ public class GameManager {
         if(game != null) {
             game.stopGame();
         } else {
-            player.sendRichMessage("<gradient:#FF5757:#C61919>You are not currently in a game.</gradient>");
+            player.sendRichMessage("<gradient:#FF5757:#C61919>You are not currently in a game!</gradient>");
         }
     }
 
@@ -44,6 +44,16 @@ public class GameManager {
             }
         }
         activeGames.clear();
+    }
+
+    public static void restartGame(Player player) {
+        final Game game = activeGames.remove(player);
+
+        if(game != null) {
+            game.restartGame();
+        } else {
+            player.sendRichMessage("<gradient:#FF5757:#C61919>You are not currently in a game!</gradient>");
+        }
     }
 
     public static Game getGame(Player player) {
